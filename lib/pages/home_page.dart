@@ -1,5 +1,8 @@
+import 'package:appquiztory/pages/sign_in.dart';
+import 'package:appquiztory/services/auth_service.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -11,6 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
     return Scaffold(
       backgroundColor: const Color(0xFF4B39EF),
       body: Container(
@@ -241,7 +245,12 @@ class _HomePageState extends State<HomePage> {
                               child: const Text('LOG OUT',
                                   style: TextStyle(
                                       fontSize: 40, color: Colors.white)),
-                              onPressed: () {},
+                              onPressed: () async {
+                                await authService.signOut();
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                    '/SplashScreen',
+                                    (Route<dynamic> route) => false);
+                              },
                             ),
                           ])),
                 ]),

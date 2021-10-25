@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:appquiztory/pages/addprofile.dart';
 import 'package:appquiztory/pages/sign_up.dart';
 import 'package:appquiztory/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -18,19 +17,13 @@ class _SignInState extends State<SignIn> {
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
 
-  void _doSomething() {
-    Timer(const Duration(seconds: 3), () {
-      _btnController.success();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     TextEditingController emailcontroller = TextEditingController();
     TextEditingController passwordcontroller = TextEditingController();
 
     final authService = Provider.of<AuthService>(context);
-    
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Quiztory'),
@@ -91,18 +84,23 @@ class _SignInState extends State<SignIn> {
                   //onPressed: _doSomething,
                   onPressed: () async {
                     try {
-                              final user = await authService.signInWithEmailAndPassword(
-                    emailcontroller.text, passwordcontroller.text);
-                              if (user == null) {
-                                return;
-                              }
-                            } finally {
-                              _btnController.success();
-                            }
-                            await Navigator.push(
+                      _btnController.start();
+                      final user = await authService.signInWithEmailAndPassword(
+                          emailcontroller.text, passwordcontroller.text);
+                      if (user == null) {
+                        return;
+                      }
+                      await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const AddProfileDetail()));
+                    } on FirebaseAuthException catch (e) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: ${e.message}')),
+                      );
+                      _btnController.reset();
+                    } 
                   },
                 ),
                 Row(
