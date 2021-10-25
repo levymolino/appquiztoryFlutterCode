@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "698431239967",
+    "project_id": "appquiztorydb",
+    "storage_bucket": "appquiztorydb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698431239967:android:0bb9cbb22454a949a0a22a",
+        "android_client_info": {
+          "package_name": "com.example.appquiztory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "698431239967-17rk9npfup9m7iug4tiuisl09o8mgpcm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjAyw9iw_dwRTALUuhpOwURmPxxyeUszk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "698431239967-17rk9npfup9m7iug4tiuisl09o8mgpcm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -35,26 +35,37 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                      padding:
-                          const EdgeInsetsDirectional.fromSTEB(0, 70, 0, 30),
-                      child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProfileAvatar(
-                              'assets/images/add-user.png', //sets image path, it should be a URL string. default value is empty string, if path is empty it will display only initials
-                              radius: 80, // sets radius, default 50.0
-                              backgroundColor: Colors
-                                  .transparent, // sets background color, default Colors.white
-                              borderWidth: 8, // sets border, default 0.0
-                              borderColor: Colors
-                                  .white, // sets border color, default Colors.white
-                              elevation:
-                                  5.0, // sets elevation (shadow of the profile picture), default value is 0.0
-                              imageFit: BoxFit.cover,
-                              onTap: () {}, // sets on tap
-                            )
-                          ])),
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 70, 0, 30),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProfileAvatar(
+//                  'https://avatars0.githubusercontent.com/u/8264639?s=460&v=4',
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRWtMDksH9GzFdMinyAkGbtLJNx6xynLETTNN5akjxirL3QD5Rj',
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                          placeHolder: (context, url) => const SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: CircularProgressIndicator(),
+                          ),
+                          radius: 90,
+                          backgroundColor: Colors.transparent,
+                          borderWidth: 10,
+                          initialsText: const Text(
+                            "AD",
+                            style: TextStyle(fontSize: 40, color: Colors.white),
+                          ),
+                          borderColor: Colors.red,
+                          imageFit: BoxFit.fitHeight,
+                          elevation: 5.0,
+                          cacheImage: true,
+                          showInitialTextAbovePicture: false,
+                        ),
+                      ],
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
                     child: Row(
