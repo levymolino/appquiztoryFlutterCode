@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:appquiztory/pages/addprofile.dart';
 import 'package:appquiztory/pages/sign_in.dart';
 import 'package:appquiztory/services/auth_service.dart';
@@ -19,11 +17,6 @@ class _SignUpState extends State<SignUp> {
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
 
-  void _doSomething() async {
-    Timer(const Duration(seconds: 3), () {
-      _btnController.success();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
