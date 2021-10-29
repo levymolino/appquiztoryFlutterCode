@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:appquiztory/pages/home_page.dart';
-import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 
 class AddProfileDetail extends StatefulWidget {
   const AddProfileDetail({Key? key}) : super(key: key);
@@ -10,6 +16,10 @@ class AddProfileDetail extends StatefulWidget {
 }
 
 class _AddProfileDetailState extends State<AddProfileDetail> {
+  File? file;
+
+  final TextEditingController _textEditingController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,29 +50,23 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProfileAvatar(
-//                  'https://avatars0.githubusercontent.com/u/8264639?s=460&v=4',
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRWtMDksH9GzFdMinyAkGbtLJNx6xynLETTNN5akjxirL3QD5Rj',
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                          placeHolder: (context, url) => const SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: CircularProgressIndicator(),
-                          ),
-                          radius: 90,
-                          backgroundColor: Colors.transparent,
-                          borderWidth: 10,
-                          initialsText: const Text(
-                            "AD",
-                            style: TextStyle(fontSize: 40, color: Colors.white),
-                          ),
-                          borderColor: Colors.red,
-                          imageFit: BoxFit.fitHeight,
-                          elevation: 5.0,
-                          cacheImage: true,
-                          showInitialTextAbovePicture: false,
-                        ),
+                        file == null
+                            ? InkWell(
+                                onTap: () {
+                                  chooseImage();
+                                },
+                                child: const Icon(
+                                  Icons.image,
+                                  size: 48,
+                                ),
+                              )
+                            : ClipOval(
+                                child: Image.file(
+                                file!,
+                                width: 160,
+                                height: 160,
+                                fit: BoxFit.cover,
+                              ))
                       ],
                     ),
                   ),
@@ -73,6 +77,7 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                       children: [
                         Expanded(
                           child: TextFormField(
+                            controller: _textEditingController,
                             obscureText: false,
                             decoration: InputDecoration(
                               labelText: 'Full Name',
@@ -243,6 +248,7 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                                   style: TextStyle(
                                       fontSize: 40, color: Colors.white)),
                               onPressed: () {
+                                updateProfile(context);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -256,5 +262,34 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
         ),
       ),
     );
+  }
+
+  chooseImage() async {
+    XFile? xfile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    print("file " + xfile!.path);
+    file = File(xfile.path);
+    setState(() {});
+  }
+  updateProfile(BuildContext context) async {
+    Map<String, dynamic> map = {};
+    String url = await uploadImage();
+    map['profileImage'] = url;
+    map['name'] = _textEditingController.text;
+
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update(map);
+  }
+
+  Future<String> uploadImage() async {
+    TaskSnapshot taskSnapshot = await FirebaseStorage.instance
+        .ref()
+        .child("profile")
+        .child(
+            FirebaseAuth.instance.currentUser!.uid + "_" + basename(file!.path))
+        .putFile(file!);
+
+    return taskSnapshot.ref.getDownloadURL();
   }
 }
