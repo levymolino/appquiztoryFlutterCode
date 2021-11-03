@@ -1,4 +1,7 @@
+import 'package:appquiztory/pages/sign_in.dart';
+import 'package:appquiztory/pages/sign_up.dart';
 import 'package:appquiztory/services/auth_service.dart';
+import 'package:appquiztory/services/wrapper.dart';
 import 'package:appquiztory/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +23,16 @@ class MyApp extends StatelessWidget {
         providers: [Provider<AuthService>(create: (_) => AuthService())],
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Splash Screens',
-            home: const SplashScreen(),
-            routes: <String, WidgetBuilder>{
-              '/SplashScreen': (BuildContext context) => const SplashScreen(),
-            },));
+            title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const Wrapper(),
+          '/Login': (context) => const SignIn(),
+          '/register': (context) => const SignUp(),
+        },
+      ),);
   }
 }

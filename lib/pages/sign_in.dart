@@ -1,4 +1,6 @@
-import 'package:appquiztory/pages/addprofile.dart';
+import 'package:appquiztory/pages/actualhome.dart';
+import 'package:appquiztory/pages/devsignin.dart';
+import 'package:appquiztory/pages/addquiz.dart';
 import 'package:appquiztory/pages/sign_up.dart';
 import 'package:appquiztory/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +18,8 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
+
+  int _counter = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +97,14 @@ class _SignInState extends State<SignIn> {
                       await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AddProfileDetail()));
+                              builder: (context) => const ActualHome()));
                     } on FirebaseAuthException catch (e) {
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Error: ${e.message}')),
                       );
                       _btnController.reset();
-                    } 
+                    }
                   },
                 ),
                 Row(
@@ -120,9 +124,56 @@ class _SignInState extends State<SignIn> {
                               ),
                         );
                       },
-                    )
+                    ),
                   ],
                   mainAxisAlignment: MainAxisAlignment.center,
+                ),
+                Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text(
+                          'DEVELOPED BY:',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            color: Colors.blue,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        )
+                      ],
+                    )),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _counter++;
+                        });
+                        if (_counter == 10) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      '3 more tap to enter developers mode')));
+                        }
+                        if (_counter == 13) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const DevSignIn()));
+                        }
+                      },
+                      child: Image.asset(
+                        'assets/images/0402d5b772f14be394dcd6441b98132f.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  ],
                 )
               ],
             )));

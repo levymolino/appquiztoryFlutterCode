@@ -1,35 +1,31 @@
-import 'package:appquiztory/pages/addprofile.dart';
-import 'package:appquiztory/pages/sign_in.dart';
+import 'package:appquiztory/pages/devhome.dart';
 import 'package:appquiztory/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({Key? key}) : super(key: key);
+class DevSignIn extends StatefulWidget {
+  const DevSignIn({Key? key}) : super(key: key);
 
   @override
-  _SignUpState createState() => _SignUpState();
+  _SignInState createState() => _SignInState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignInState extends State<DevSignIn> {
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
-
 
   @override
   Widget build(BuildContext context) {
     TextEditingController emailcontroller = TextEditingController();
     TextEditingController passwordcontroller = TextEditingController();
-    TextEditingController confirmpasswordcontroller = TextEditingController();
 
     final authService = Provider.of<AuthService>(context);
 
-
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Quiztory'),
+          title: const Text('Developers Sign In'),
         ),
         body: Padding(
             padding: const EdgeInsets.all(10),
@@ -45,11 +41,26 @@ class _SignUpState extends State<SignUp> {
                           fontWeight: FontWeight.w500,
                           fontSize: 30),
                     )),
+                    Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onLongPress: () {},
+                      child: Image.asset(
+                        'assets/images/0402d5b772f14be394dcd6441b98132f.png',
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  ],
+                ),
                 Container(
                     alignment: Alignment.center,
                     padding: const EdgeInsets.all(10),
                     child: const Text(
-                      'Sign up',
+                      'Sign in',
                       style: TextStyle(fontSize: 20),
                     )),
                 Container(
@@ -73,17 +84,6 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: TextField(
-                    controller: confirmpasswordcontroller,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Confirm Password',
-                    ),
-                  ),
-                ),
                 TextButton(
                   child: const Text('Forgot Password?',
                       style: TextStyle(fontSize: 20, color: Colors.blue)),
@@ -92,38 +92,22 @@ class _SignUpState extends State<SignUp> {
                   },
                 ),
                 RoundedLoadingButton(
-                  child: const Text('SIGN UP',
-                      style: TextStyle(color: Colors.white)), //Sign up button
+                  child: const Text('LOG IN',
+                      style: TextStyle(color: Colors.white)),
                   controller: _btnController,
+                  //onPressed: _doSomething,
                   onPressed: () async {
-                    _btnController.start();
                     try {
-                      if (passwordcontroller.text !=
-                          confirmpasswordcontroller.text) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Passwords don't match!",
-                            ),
-                          ),
-                        );
-                        _btnController.reset();
-                        
-                        return;
-                      }
-
-                      final user =
-                          await authService.createUserWithEmailAndPassword(
-                        emailcontroller.text,
-                        passwordcontroller.text,
-                      );
+                      _btnController.start();
+                      final user = await authService.signInWithEmailAndPassword(
+                          emailcontroller.text, passwordcontroller.text);
                       if (user == null) {
                         return;
                       }
                       await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const AddProfileDetail()));
+                              builder: (context) => const DevHomePage()));
                     } on FirebaseAuthException catch (e) {
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -133,27 +117,6 @@ class _SignUpState extends State<SignUp> {
                     }
                   },
                 ),
-                Row(
-                  children: <Widget>[
-                    const Text('Already have an account'),
-                    TextButton(
-                      child: const Text(
-                        'Sign in',
-                        style: TextStyle(fontSize: 20, color: Colors.blue),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const SignIn() //Going to signin page
-                              ),
-                        );
-                      },
-                    )
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                )
               ],
             )));
   }

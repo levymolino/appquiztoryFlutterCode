@@ -1,32 +1,33 @@
 import 'dart:io';
 
-import 'package:appquiztory/pages/addquiz.dart';
+import 'package:appquiztory/pages/addquestion.dart';
+import 'package:appquiztory/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:provider/provider.dart';
 
-class AddProfileDetail extends StatefulWidget {
-  const AddProfileDetail({Key? key}) : super(key: key);
+class Addquiz extends StatefulWidget {
+  const Addquiz({Key? key}) : super(key: key);
 
   @override
-  _AddProfileDetailState createState() => _AddProfileDetailState();
+  _AddContentDetailState createState() => _AddContentDetailState();
 }
-
-class _AddProfileDetailState extends State<AddProfileDetail> {
+class _AddContentDetailState extends State<Addquiz> {
   File? file;
 
-   final TextEditingController _nametextEditingController =
+  final TextEditingController _titletextEditingController =
       TextEditingController();
-  final TextEditingController _addresstextEditingController =
-      TextEditingController();
-  final TextEditingController _phoneNumtextEditingController =
+  final TextEditingController _descriptiontextEditingController =
       TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final filename = file != null ? basename(file!.path) : 'No File Selected';
+    final authService = Provider.of<AuthService>(context);
     return Scaffold(
       backgroundColor: const Color(0xFF4B39EF),
       body: Container(
@@ -56,22 +57,32 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         file == null
-                            ? InkWell(
-                                onTap: () {
-                                  chooseImage();
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  selectFile();
                                 },
-                                child: const Icon(
-                                  Icons.image,
-                                  size: 48,
+                                child: Wrap(
+                                  children: const <Widget>[
+                                    Icon(
+                                      Icons.attach_file,
+                                      color: Colors.redAccent,
+                                      size: 24.0,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text("Upload File",
+                                        style: TextStyle(fontSize: 20)),
+                                  ],
                                 ),
                               )
-                            : ClipOval(
-                                child: Image.file(
-                                file!,
-                                width: 160,
-                                height: 160,
-                                fit: BoxFit.cover,
-                              ))
+                            : Text(
+                                filename,
+                                style: const TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 10,
+                                    color: Colors.white),
+                              )
                       ],
                     ),
                   ),
@@ -82,7 +93,7 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                       children: [
                         Expanded(
                           child: TextFormField(
-                            controller: _nametextEditingController,
+                            controller: _titletextEditingController,
                             obscureText: false,
                             decoration: InputDecoration(
                               labelText: 'Full Name',
@@ -138,7 +149,7 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                       children: [
                         Expanded(
                           child: TextFormField(
-                            controller: _addresstextEditingController,
+                            controller: _descriptiontextEditingController,
                             obscureText: false,
                             decoration: InputDecoration(
                               labelText: 'Home Address',
@@ -188,62 +199,6 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _phoneNumtextEditingController,
-                            obscureText: false,
-                            decoration: InputDecoration(
-                              labelText: 'Phone Number',
-                              labelStyle: const TextStyle(
-                                fontFamily: 'Lexend Deca',
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                              ),
-                              hintText: 'Enter your Phone Number here...',
-                              hintStyle: const TextStyle(
-                                fontFamily: 'Lexend Deca',
-                                color: Color(0xFF95A1AC),
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFDBE2E7),
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFDBE2E7),
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              contentPadding:
-                                  const EdgeInsetsDirectional.fromSTEB(
-                                      16, 24, 0, 24),
-                            ),
-                            style: const TextStyle(
-                              fontFamily: 'Lexend Deca',
-                              color: Color(0xFF2B343A),
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            keyboardType: TextInputType.streetAddress,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
                       padding:
                           const EdgeInsetsDirectional.fromSTEB(0, 70, 0, 30),
                       child: Row(
@@ -251,16 +206,15 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TextButton(
-                              child: const Text('Continue',
+                              child: const Text('Add Questions',
                                   style: TextStyle(
                                       fontSize: 40, color: Colors.white)),
                               onPressed: () {
-                                updateProfile(context);
+                                addcontent(context);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Addquiz()));
+                                        builder: (context) => const Addquestions()));
                               },
                             ),
                           ])),
@@ -271,33 +225,33 @@ class _AddProfileDetailState extends State<AddProfileDetail> {
     );
   }
 
-  chooseImage() async {
-    XFile? xfile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    file = File(xfile!.path);
-    setState(() {});
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+    if (result == null) return;
+    final path = result.files.single.path!;
+
+    setState(() => file = File(path));
   }
 
-  updateProfile(BuildContext context) async {
+  addcontent(BuildContext context) async {
     Map<String, dynamic> map = {};
-    String url = await uploadImage();
-    map['profileImage'] = url;
-    map['name'] = _nametextEditingController.text;
-    map['homeaddress'] = _addresstextEditingController.text;
-    map['phonenumber'] = _phoneNumtextEditingController.text;
+    String url = await uploadvideo();
+    map['Content Video'] = url;
+    map['title'] = _titletextEditingController.text;
+    map['description'] = _descriptiontextEditingController.text;
 
     await FirebaseFirestore.instance
-        .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update(map);
+        .collection("content")
+        .doc(_titletextEditingController.text)
+        .set(map);
   }
 
-  Future<String> uploadImage() async {
+  Future<String> uploadvideo() async {
     TaskSnapshot taskSnapshot = await FirebaseStorage.instance
         .ref()
-        .child("profile")
+        .child("Content Videos")
         .child(FirebaseAuth.instance.currentUser!.uid)
-        .child(
-            FirebaseAuth.instance.currentUser!.uid + "_" + basename(file!.path))
+        .child("_" + basename(file!.path))
         .putFile(file!);
 
     return taskSnapshot.ref.getDownloadURL();

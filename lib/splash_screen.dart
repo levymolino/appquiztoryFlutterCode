@@ -10,7 +10,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  bool _isVisible = false;
   _SplashScreenState() {
     Timer(const Duration(milliseconds: 4000), () {
       setState(() {
@@ -22,8 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(const Duration(milliseconds: 10), () {
       setState(() {
-        _isVisible =
-            true; // Now it is showing fade effect and navigating to Login page
+// Now it is showing fade effect and navigating to Login page
       });
     });
   }

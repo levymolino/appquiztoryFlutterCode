@@ -9,7 +9,7 @@ class AuthService {
     if (user == null) {
       return null;
     }
-    return UserModel( email: '', uid: '', name: '', profileImage: '');
+    return UserModel( email: '', uid: '', name: '', profileImage: '', homeaddress: '', phonenumber: '');
   }
 
   Stream<UserModel?>? get user {
@@ -38,7 +38,7 @@ postDetailsToFirestore() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     auth.User? user = FirebaseAuth.instance.currentUser;
 
-    UserModel userModel = UserModel(email: '', name: '', profileImage: '', uid: '');
+    UserModel userModel = UserModel(email: '', name: '', profileImage: '', uid: '', homeaddress: '', phonenumber: '');
     userModel.uid = user!.uid;
     // narimetisaigopi@gmail.com
     userModel.email = user.email!;
