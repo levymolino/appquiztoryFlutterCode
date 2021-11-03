@@ -1,4 +1,3 @@
-import 'package:appquiztory/pages/sign_in.dart';
 import 'package:appquiztory/services/auth_service.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:flutter/material.dart';
