@@ -104,7 +104,7 @@ class _SignInState extends State<DevSignIn> {
                       if (user == null) {
                         return;
                       }
-                      await Navigator.push(
+                      await Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const DevHomePage()));
